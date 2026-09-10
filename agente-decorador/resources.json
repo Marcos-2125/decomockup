@@ -1,0 +1,16 @@
+[
+  {
+    "resourceId": "res_mermaid",
+    "nombre": "Sirenita",
+    "categoria": "personaje",
+    "anchoOriginalCm": 50,
+    "altoOriginalCm": 70
+  },
+  {
+    "resourceId": "res_crown",
+    "nombre": "Corona Oro",
+    "categoria": "decoracion",
+    "anchoOriginalCm": 20,
+    "altoOriginalCm": 20
+  }
+]
