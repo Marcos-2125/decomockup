@@ -488,3 +488,123 @@ Agent Decision Layer
 ## Estado
 
 Activo.
+---
+
+# DECISIÓN 012
+
+## Fecha
+
+22/09/2026
+
+
+## Tema
+
+Separación entre inteligencia del código e inteligencia almacenada.
+
+
+## Decisión
+
+El agente tendrá una separación clara entre:
+
+1. Inteligencia del sistema (código).
+
+2. Inteligencia acumulada (base de conocimiento).
+
+
+El código será responsable de:
+
+- reglas generales;
+- lógica del agente;
+- ejecución de herramientas;
+- validaciones;
+- seguridad;
+- comunicación entre componentes.
+
+
+Supabase será responsable de almacenar:
+
+- memoria de experiencias;
+- conocimiento aprendido;
+- patrones de diseño;
+- relaciones entre conceptos;
+- evidencia histórica.
+
+
+## Motivo
+
+El agente debe poder mejorar con el tiempo sin modificar constantemente el código principal.
+
+La inteligencia acumulada debe evolucionar mediante datos y experiencias reales.
+
+
+## Arquitectura
+
+```
+Código del sistema
+
+↓
+
+Consulta memoria y conocimiento
+
+↓
+
+Supabase
+
+↓
+
+Experiencias + Patrones + Evidencia
+
+↓
+
+Modelo IA decide cuando sea necesario
+```
+
+
+## Tipos de inteligencia
+
+
+### Inteligencia fija
+
+Ubicada en código.
+
+Ejemplos:
+
+- validar posiciones;
+- ejecutar herramientas;
+- controlar permisos;
+- aplicar reglas técnicas.
+
+
+### Inteligencia acumulada
+
+Ubicada en Supabase.
+
+Ejemplos:
+
+- composiciones exitosas;
+- combinaciones de colores;
+- estrategias de diseño;
+- experiencias anteriores.
+
+
+### Inteligencia de razonamiento
+
+Proporcionada por modelos IA.
+
+Ejemplos:
+
+- interpretar solicitudes nuevas;
+- resolver ambigüedades;
+- crear estrategias nuevas.
+
+
+## Principio
+
+El modelo IA no es la memoria del sistema.
+
+El modelo razona utilizando el conocimiento almacenado por la plataforma.
+
+
+## Estado
+
+Activo.
