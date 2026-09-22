@@ -439,6 +439,12 @@ Debe comprender:
 - estilos;
 - intención del usuario.
 
+El agente debe trabajar en dos escenarios:
+
+- crear diseños nuevos;
+- mejorar diseños existentes.
+
+Además debe poder actuar como asesor profesional.
 ---
 
 ## Resultado esperado

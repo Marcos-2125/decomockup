@@ -608,3 +608,178 @@ El modelo razona utilizando el conocimiento almacenado por la plataforma.
 ## Estado
 
 Activo.
+---
+
+# DECISIÓN 013
+
+## Fecha
+
+22/09/2026
+
+
+## Tema
+
+Modos operativos del agente diseñador.
+
+
+## Decisión
+
+El agente tendrá dos modos principales de trabajo:
+
+1. Creación desde cero.
+
+2. Mejora y asistencia sobre diseños existentes.
+
+
+Además tendrá una capacidad transversal:
+
+3. Aprendizaje mediante experiencias reales.
+
+
+---
+
+# Modo 1 — Creación desde cero
+
+## Objetivo
+
+Permitir que el usuario solicite un diseño sin tener un trabajo previo.
+
+
+Ejemplo:
+
+Usuario:
+
+"Créame un diseño de princesa rosa para cumpleaños"
+
+
+El agente debe:
+
+- comprender la intención;
+- analizar recursos disponibles;
+- definir estrategia visual;
+- seleccionar elementos;
+- crear composición;
+- ejecutar herramientas.
+
+
+---
+
+# Modo 2 — Mejora de diseño existente
+
+## Objetivo
+
+Trabajar sobre un diseño que el usuario ya tiene creado.
+
+
+Ejemplo:
+
+Usuario:
+
+"Hazlo más elegante"
+
+
+El agente debe:
+
+- analizar el diseño actual;
+- identificar problemas;
+- conservar elementos correctos;
+- proponer mejoras;
+- modificar mediante herramientas.
+
+
+---
+
+# Modo 3 — Asistencia profesional
+
+## Objetivo
+
+El agente debe comportarse como un diseñador asesor.
+
+
+Debe poder aconsejar sobre:
+
+- colores;
+- composición;
+- ubicación de elementos;
+- estilos;
+- equilibrio visual;
+- mejoras posibles.
+
+
+Ejemplo:
+
+Usuario:
+
+"¿Qué le falta a mi diseño?"
+
+
+El agente analiza y responde profesionalmente.
+
+
+---
+
+# Aprendizaje automático
+
+## Decisión
+
+El agente debe aprender de experiencias reales almacenadas en Supabase.
+
+
+Debe analizar:
+
+- diseños creados;
+- decisiones tomadas;
+- modificaciones realizadas;
+- resultados obtenidos.
+
+
+El aprendizaje debe generar:
+
+- patrones;
+- conocimiento;
+- estrategias reutilizables.
+
+
+---
+
+# AgentState debe soportar:
+
+```
+mode:
+
+create_new
+
+o
+
+improve_existing
+```
+
+
+Además debe almacenar:
+
+- objetivo;
+- diseño actual;
+- recursos;
+- contexto;
+- estrategia;
+- resultado.
+
+
+---
+
+## Motivo
+
+Un diseñador profesional no solamente crea diseños nuevos.
+
+También:
+
+- analiza;
+- corrige;
+- aconseja;
+- mejora;
+- aprende de experiencia.
+
+
+## Estado
+
+Activo.

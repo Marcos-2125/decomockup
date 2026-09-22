@@ -563,6 +563,12 @@ AgentState
 ```
 
 ---
+El agente debe soportar dos contextos:
+
+- creación desde cero;
+- modificación de diseño existente.
+
+El estado debe conservar el objetivo del usuario y el estado actual del editor.
 
 # 17. Planner
 
