@@ -380,3 +380,111 @@ Pendientes:
 - Definir contrato de Tools.
 - Definir formato de memoria de experiencias.
 - Definir estrategia de aprendizaje.
+
+# DECISIÓN 010
+
+## Tema
+
+Uso inteligente de modelos IA.
+
+
+## Decisión
+
+Los modelos IA no serán utilizados para todas las operaciones.
+
+El sistema priorizará soluciones deterministas mediante Node.js.
+
+Los modelos serán llamados únicamente cuando exista necesidad de:
+
+- razonamiento;
+- interpretación ambigua;
+- análisis visual;
+- creación de estrategias.
+
+
+## Motivo
+
+Reducir costos, latencia y dependencia de modelos externos.
+
+
+## Estado
+
+Activo.
+---
+
+# DECISIÓN 011
+
+## Fecha
+
+22/09/2026
+
+
+## Tema
+
+Capa de decisión del agente.
+
+
+## Decisión
+
+El agente no utilizará modelos IA para todas las operaciones.
+
+Antes de llamar un modelo, existirá una capa de decisión que evaluará la naturaleza de la tarea.
+
+
+El sistema decidirá entre:
+
+- ejecución determinista mediante Node.js;
+- razonamiento mediante modelo IA;
+- análisis visual mediante modelo de visión.
+
+
+## Motivo
+
+Reducir:
+
+- consumo de tokens;
+- latencia;
+- dependencia de proveedores externos.
+
+Además permite que las tareas repetitivas y conocidas sean ejecutadas directamente por el sistema.
+
+
+## Ejemplos
+
+Movimiento de elementos:
+
+Node.js resuelve directamente.
+
+
+Creación de una composición profesional:
+
+Necesita razonamiento IA.
+
+
+Análisis de una imagen de referencia:
+
+Necesita visión.
+
+
+## Arquitectura esperada
+
+```
+Usuario
+
+↓
+
+Agent Decision Layer
+
+↓
+
+¿Necesita IA?
+
+├── No → Node.js + Tools
+
+└── Sí → Modelo adecuado
+```
+
+
+## Estado
+
+Activo.

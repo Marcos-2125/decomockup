@@ -1,12 +1,26 @@
 # ROADMAP — META IA AGENTE DISEÑADOR Y DECORADOR
 
-## Objetivo del roadmap
+# Objetivo del roadmap
 
 Este documento define el orden de construcción del agente IA profesional integrado dentro del editor Decomockup.
 
-La prioridad es construir primero un agente operativo, estable y controlado.
+El objetivo final es construir un agente capaz de comportarse como un diseñador y decorador profesional dentro de la plataforma.
 
-Después se agregarán memoria, aprendizaje y automatización.
+El agente debe poder:
+
+- crear diseños;
+- modificar diseños existentes;
+- analizar referencias visuales;
+- asesorar usuarios;
+- utilizar recursos reales de la plataforma;
+- ejecutar acciones mediante herramientas del editor;
+- aprender de experiencias reales.
+
+La prioridad inicial es construir un agente operativo, eficiente, controlado y escalable.
+
+El sistema debe utilizar inteligencia artificial únicamente cuando aporte valor.
+
+Las tareas que puedan resolverse mediante lógica determinista en Node.js no deben consumir modelos IA.
 
 ---
 
@@ -34,43 +48,200 @@ Después se agregarán memoria, aprendizaje y automatización.
 
 ---
 
-# FASE 1 — Model Router
+# FASE 1 — Agent Decision Layer
 
 ## Objetivo
 
-Eliminar la dependencia de un modelo fijo dentro del código.
+Crear la capa de decisión principal del agente.
 
-Actualmente el modelo está definido directamente en el agente.
+Esta capa determina qué tipo de procesamiento necesita cada solicitud antes de ejecutar cualquier acción.
 
-Debe evolucionar hacia un sistema configurable.
+El sistema debe decidir si una tarea puede resolverse:
+
+- directamente mediante Node.js;
+- mediante razonamiento IA;
+- mediante análisis visual.
 
 ---
 
-## Resultado esperado
+## Principio
 
-El agente debe poder cambiar entre:
+La inteligencia artificial no debe utilizarse para todas las operaciones.
 
-- Qwen.
-- Llama.
-- Gemini.
-- Otros modelos compatibles.
+Primero se debe evaluar si la tarea puede resolverse mediante reglas, cálculos o conocimiento ya validado.
 
-Sin modificar la lógica del agente.
+---
+
+## Ejemplos
+
+### Acción determinista
+
+Usuario:
+
+"Mueve la princesa 5 cm a la derecha"
+
+Proceso:
+
+```
+Usuario
+
+↓
+
+Agent Decision Layer
+
+↓
+
+Node.js ejecuta movimiento
+
+↓
+
+Tool modifica editor
+```
+
+No necesita modelo IA.
+
+
+---
+
+### Acción creativa
+
+Usuario:
+
+"Créame un diseño elegante de princesa rosa"
+
+Proceso:
+
+```
+Usuario
+
+↓
+
+Agent Decision Layer
+
+↓
+
+Necesita razonamiento
+
+↓
+
+Modelo IA
+
+↓
+
+Tools
+
+↓
+
+Editor
+```
+
+---
+
+### Acción visual
+
+Usuario:
+
+"Quiero un diseño parecido a esta imagen"
+
+Proceso:
+
+```
+Imagen
+
+↓
+
+Agent Decision Layer
+
+↓
+
+Necesita visión
+
+↓
+
+Modelo visual
+
+↓
+
+Razonamiento
+
+↓
+
+Tools
+```
+
+---
+
+## Responsabilidades
+
+Debe decidir:
+
+- si la tarea es determinista;
+- si requiere razonamiento;
+- si requiere visión;
+- qué contexto necesita cada componente;
+- qué herramientas deben utilizarse.
 
 ---
 
 ## Crear
 
 ```
-ai/
+agent/
 
-├── router.js
+├── decisionEngine.js
 
-├── ollama.js
+├── taskClassifier.js
 
-├── gemini.js
+└── router.js
+```
 
-└── config.js
+---
+
+# FASE 2 — Model Router
+
+## Objetivo
+
+Separar los modelos IA de la lógica principal del agente.
+
+El agente no debe depender de un modelo específico.
+
+---
+
+## Responsabilidad
+
+El Model Router solamente decide qué proveedor y modelo utilizar cuando el Agent Decision Layer determina que se necesita IA.
+
+---
+
+## Resultado esperado
+
+Poder cambiar entre:
+
+- Qwen;
+- Llama;
+- Gemini;
+- otros proveedores.
+
+Sin modificar el código principal.
+
+---
+
+## Arquitectura
+
+```
+AGENTE
+
+↓
+
+MODEL ROUTER
+
+↓
+
+Ollama
+
+Gemini
+
+Otros proveedores
 ```
 
 ---
@@ -92,7 +263,7 @@ VISION_MODEL=qwen3-vl:8b
 
 ---
 
-# FASE 2 — Agent State
+# FASE 3 — Agent State
 
 ## Objetivo
 
@@ -100,17 +271,20 @@ Crear un estado central del agente.
 
 Actualmente la información está distribuida entre editor, backend y modelo.
 
-Debe existir una representación única del contexto.
+Debe existir una representación única del contexto actual.
 
 ---
 
 ## AgentState debe contener
 
 - objetivo del usuario;
-- lienzo actual;
+- canvas actual;
 - elementos existentes;
 - recursos disponibles;
 - restricciones;
+- herramientas disponibles;
+- observaciones;
+- plan actual;
 - acciones realizadas;
 - resultado.
 
@@ -122,28 +296,85 @@ El agente podrá comprender:
 
 - dónde está trabajando;
 - qué existe actualmente;
-- qué puede modificar.
+- qué puede modificar;
+- cuál es la situación actual del diseño.
 
 ---
 
-# FASE 3 — Separación del ciclo del agente
+# FASE 4 — Tool Registry
 
 ## Objetivo
 
-Pasar de:
+Crear una capa organizada para administrar las capacidades del agente.
+
+---
+
+## Principio
+
+Las herramientas representan capacidades reales del sistema.
+
+La IA no inventa acciones.
+
+---
+
+## Responsabilidades
+
+Administrar:
+
+- herramientas disponibles;
+- parámetros;
+- validaciones;
+- permisos;
+- resultados.
+
+---
+
+## Ejemplos
+
+```
+addElement
+
+moveElement
+
+resizeElement
+
+rotateElement
+
+changeLayer
+
+editText
+
+changeBackground
+```
+
+---
+
+# FASE 5 — Ciclo completo del agente
+
+## Objetivo
+
+Evolucionar desde:
 
 ```
 Usuario
+
 ↓
+
 IA
+
 ↓
+
 Tool
 ```
 
-a:
+hacia un agente completo:
 
 ```
 Observar
+
+↓
+
+Decidir
 
 ↓
 
@@ -160,11 +391,15 @@ Actuar
 ↓
 
 Verificar
+
+↓
+
+Mejorar
 ```
 
 ---
 
-## Componentes nuevos
+## Componentes
 
 Crear:
 
@@ -178,13 +413,13 @@ Verifier
 
 ---
 
-# FASE 4 — Diseñador profesional
+# FASE 6 — Diseñador profesional
 
 ## Objetivo
 
-Agregar conocimiento de diseño.
+Convertir el agente en un diseñador profesional.
 
-El agente debe dejar de ejecutar acciones simples y comenzar a pensar como diseñador.
+El agente debe dejar de ejecutar solamente acciones y comenzar a crear estrategias visuales.
 
 ---
 
@@ -201,7 +436,8 @@ Debe comprender:
 - capas;
 - armonía;
 - proporción;
-- estilo.
+- estilos;
+- intención del usuario.
 
 ---
 
@@ -213,18 +449,21 @@ Usuario:
 
 "Crear diseño de princesa rosa"
 
-El agente debe crear una composición completa:
+El agente debe generar una composición completa:
 
 - protagonista;
 - fondo;
 - decoración secundaria;
 - efectos;
 - texto;
-- profundidad visual.
+- profundidad visual;
+- equilibrio compositivo.
+
+No debe limitarse a colocar elementos básicos.
 
 ---
 
-# FASE 5 — Reconstrucción de referencias
+# FASE 7 — Reconstrucción de referencias
 
 ## Objetivo
 
@@ -242,7 +481,9 @@ Permitir que el usuario entregue una imagen de referencia.
 - colores;
 - elementos;
 - distribución;
-- estilo.
+- estilo;
+- jerarquía visual;
+- profundidad.
 
 3. Buscar equivalencias dentro de los recursos existentes.
 
@@ -250,7 +491,7 @@ Permitir que el usuario entregue una imagen de referencia.
 
 ---
 
-# FASE 6 — Memoria de experiencias
+# FASE 8 — Memoria de experiencias
 
 ## Objetivo
 
@@ -265,7 +506,8 @@ Guardar diseños realizados para aprender de experiencias reales.
 - composición;
 - recursos utilizados;
 - diseño final;
-- resultado.
+- resultado;
+- modificaciones importantes.
 
 ---
 
@@ -273,17 +515,19 @@ Guardar diseños realizados para aprender de experiencias reales.
 
 - cada movimiento del mouse;
 - cambios mínimos;
-- datos innecesarios.
+- información innecesaria.
 
 ---
 
-# FASE 7 — Sistema de conocimiento
+# FASE 9 — Sistema de conocimiento
 
 ## Objetivo
 
 Convertir experiencias repetidas en conocimiento reutilizable.
 
-Crear:
+---
+
+## Crear:
 
 ```
 knowledge_concepts
@@ -297,22 +541,25 @@ knowledge_evidence
 
 ---
 
-## Ejemplos de conocimiento
+## Ejemplos de conocimiento:
 
 - combinaciones de colores exitosas;
 - estructuras de composición;
 - distribución de elementos;
-- estrategias de diseño.
+- estrategias de diseño;
+- relaciones entre estilos y recursos.
 
 ---
 
-# FASE 8 — Aprendizaje del agente
+# FASE 10 — Aprendizaje del agente
 
 ## Objetivo
 
-Permitir que el agente mejore con experiencias reales.
+Permitir que el sistema mejore mediante experiencias reales.
 
-Proceso:
+---
+
+## Proceso:
 
 ```
 Experiencia
@@ -331,36 +578,58 @@ Evidencia
 
 ↓
 
+Validación
+
+↓
+
 Conocimiento
 ```
 
 ---
 
-# FASE 9 — Automatización avanzada
+## Principio
+
+El aprendizaje puede modificar conocimiento y estrategias.
+
+No debe modificar arbitrariamente el código principal del sistema.
+
+---
+
+# FASE 11 — Automatización avanzada
 
 ## Objetivo
 
 Convertir conocimientos validados en acciones automáticas.
 
-Ejemplo:
+---
 
-Un patrón probado:
+## Ejemplo
 
-"Princesa infantil pastel"
+Patrón validado:
 
-puede transformarse en:
+```
+Princesa infantil pastel
+```
 
-Una estrategia automática de composición.
+Puede convertirse en:
+
+```
+Estrategia automática de composición
+```
+
+sin necesidad de llamar siempre a un modelo IA.
 
 ---
 
-# FASE 10 — Decorador profesional de escenarios
+# FASE 12 — Decorador profesional de escenarios
 
 ## Objetivo futuro
 
-Expandir el agente desde diseño gráfico hacia decoración física.
+Expandir el agente desde diseño gráfico hacia decoración física de eventos.
 
-Capacidades futuras:
+---
+
+## Capacidades futuras
 
 - distribución espacial;
 - escenarios;
@@ -375,28 +644,54 @@ Capacidades futuras:
 
 1. Primero construir capacidad operativa.
 
-2. Después construir memoria.
+2. Resolver primero mediante Node.js cuando sea posible.
 
-3. Después construir aprendizaje.
+3. La IA se utiliza cuando agrega inteligencia real.
 
-4. La IA propone.
+4. La visión solamente se llama cuando existe necesidad visual.
 
-5. Node.js controla.
+5. La IA propone.
 
-6. Las herramientas ejecutan.
+6. Node.js controla.
 
-7. Los modelos pueden cambiar sin afectar la arquitectura.
+7. Las herramientas ejecutan.
 
-8. El conocimiento pertenece al sistema, no al modelo.
+8. Los modelos pueden cambiar sin afectar la arquitectura.
+
+9. El conocimiento pertenece al sistema, no al modelo.
+
+10. Primero construir un agente confiable.
+
+11. Después construir memoria y aprendizaje.
+
+12. La arquitectura debe sobrevivir a cambios de computadora, modelos y proveedores.
 
 ---
 
 # PRÓXIMO OBJETIVO ACTUAL
 
-Crear el Model Router.
+Crear el Agent Decision Layer.
 
 Motivo:
 
-Permitir cambiar entre modelos IA sin modificar el código del agente.
+Antes de implementar modelos, memoria o aprendizaje, el sistema debe aprender a decidir cuándo utilizar inteligencia artificial y cuándo resolver directamente mediante Node.js.
 
-Después continuar con Agent State y el ciclo completo del agente.
+Después continuar con:
+
+1. Model Router.
+
+2. Agent State.
+
+3. Tool Registry.
+
+4. Planner.
+
+5. Executor.
+
+6. Verifier.
+
+7. Memoria.
+
+8. Sistema de conocimiento.
+
+9. Aprendizaje.
