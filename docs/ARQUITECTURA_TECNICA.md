@@ -1,6 +1,6 @@
-# ARQUITECTURA TÉCNICA — META IA AGENTE DECORADOR
+# ARQUITECTURA TÉCNICA — META IA AGENTE DISEÑADOR Y DECORADOR
 
-## 1. Propósito del documento
+# 1. Propósito del documento
 
 Este documento describe la arquitectura técnica del proyecto Decomockup y sirve como guía para continuar el desarrollo del sistema en cualquier computadora o entorno.
 
@@ -9,13 +9,14 @@ Su objetivo es explicar:
 - cómo está organizado actualmente el proyecto;
 - qué responsabilidad tiene cada módulo;
 - cómo funciona el agente IA;
+- dónde vive la inteligencia del sistema;
 - cómo evolucionará hacia un agente diseñador profesional.
 
 ---
 
 # 2. Visión técnica general
 
-Decomockup está compuesto por dos aplicaciones principales:
+Decomockup está compuesto por:
 
 ## Frontend
 
@@ -28,46 +29,116 @@ Responsable del editor visual donde el usuario crea y modifica diseños.
 
 `agente-decorador`
 
-Responsable del agente IA, razonamiento, herramientas y comunicación con modelos.
+Responsable del sistema agente:
+
+- toma decisiones;
+- conecta componentes;
+- ejecuta herramientas;
+- administra modelos IA.
+
+
+## Memoria y conocimiento
+
+Supabase.
+
+Responsable de almacenar:
+
+- experiencias;
+- patrones;
+- conocimiento aprendido;
+- evidencia histórica.
 
 ---
 
-# 3. Arquitectura actual
+# 3. Arquitectura general del sistema
 
-Flujo actual:
+Flujo objetivo:
 
 ```
 USUARIO
 
 ↓
 
-mi-editor-eventos
-(Editor React)
+EDITOR WEB
 
 ↓
 
-Backend Node.js
+AGENT DECISION LAYER
 
 ↓
 
-Agente IA
+¿Necesita IA?
 
-↓
+        |
+        |
+        ├── No
+        |
+        ↓
 
-Modelo IA
+     Node.js + Tools
 
-↓
 
-Tools
+        |
+        |
+        └── Sí
 
-↓
+             ↓
 
-Resultado en editor
+        Model Router
+
+             ↓
+
+     Modelo adecuado
+
+             ↓
+
+        Tools
+
+             ↓
+
+        Editor
 ```
 
 ---
 
-# 4. Frontend — mi-editor-eventos
+# 4. Principio fundamental
+
+El agente no debe utilizar inteligencia artificial para todas las operaciones.
+
+Primero debe evaluar si una tarea puede resolverse mediante lógica determinista.
+
+Ejemplo:
+
+Mover un elemento:
+
+```
+Usuario:
+"Mueve la princesa 5 cm"
+
+↓
+
+Node.js ejecuta directamente
+```
+
+No requiere modelo IA.
+
+
+Ejemplo:
+
+Crear una composición profesional:
+
+```
+Usuario:
+"Crear diseño elegante de princesa rosa"
+
+↓
+
+Necesita razonamiento
+```
+
+---
+
+# 5. Frontend — mi-editor-eventos
 
 ## Responsabilidad
 
@@ -83,11 +154,12 @@ Debe permitir:
 - editar textos;
 - utilizar recursos gráficos.
 
+
 ---
 
 ## Estado del diseño
 
-Cada elemento del editor debe contener información suficiente para que el agente pueda comprenderlo.
+Cada elemento debe contener información suficiente para que el agente pueda comprenderlo.
 
 Ejemplo:
 
@@ -110,32 +182,36 @@ El editor representa el estado real del diseño.
 
 ---
 
-# 5. Backend — agente-decorador
+# 6. Backend — agente-decorador
 
 ## Responsabilidad
 
-El backend es la autoridad del agente.
+El backend es la autoridad del sistema.
 
 Funciones:
 
-- recibir solicitudes del usuario;
-- preparar contexto;
-- comunicarse con modelos IA;
+- recibir solicitudes;
+- analizar contexto;
+- consultar conocimiento;
+- decidir ejecución;
+- comunicarse con modelos;
 - ejecutar herramientas;
-- validar acciones;
-- devolver resultados.
+- validar acciones.
+
 
 Principio:
 
-La IA decide.
+```
+IA propone.
 
-Node.js valida.
+Node.js controla.
 
-El editor ejecuta.
+Editor ejecuta.
+```
 
 ---
 
-# 6. Archivos principales del agente
+# 7. Archivos principales actuales
 
 ## server.js
 
@@ -147,8 +223,8 @@ Funciones:
 
 - crear API;
 - recibir solicitudes del editor;
-- comunicarse con el agente;
-- devolver respuestas.
+- comunicar componentes.
+
 
 ---
 
@@ -160,13 +236,12 @@ Motor actual del agente.
 
 Funciones:
 
-- crear instrucciones del sistema;
-- enviar contexto al modelo;
+- preparar contexto;
+- enviar instrucciones;
 - recibir respuestas;
-- procesar tool calls;
-- ejecutar acciones.
+- procesar acciones.
 
-Actualmente utiliza Ollama como motor de razonamiento.
+Actualmente utiliza Ollama como motor local de razonamiento.
 
 ---
 
@@ -174,9 +249,7 @@ Actualmente utiliza Ollama como motor de razonamiento.
 
 Responsabilidad:
 
-Define las capacidades que el agente puede utilizar.
-
-Las herramientas representan acciones reales disponibles dentro del editor.
+Define las capacidades reales del sistema.
 
 Ejemplos:
 
@@ -185,9 +258,10 @@ Ejemplos:
 - cambiar tamaño;
 - rotar;
 - modificar capas;
-- cambiar propiedades.
+- editar propiedades.
 
-El modelo IA no modifica directamente el editor.
+
+La IA no modifica directamente el editor.
 
 Utiliza herramientas controladas.
 
@@ -197,176 +271,78 @@ Utiliza herramientas controladas.
 
 Responsabilidad:
 
-Validar las acciones antes de ejecutarlas.
+Validar acciones.
 
 Debe comprobar:
 
 - límites del lienzo;
 - existencia de recursos;
-- tamaños válidos;
-- posiciones correctas;
-- reglas del sistema.
+- tamaños;
+- posiciones;
+- reglas técnicas.
 
 ---
 
-# 7. Arquitectura del agente IA
+# 8. Agent Decision Layer
 
-El agente está compuesto por tres partes principales:
+## Responsabilidad
 
-```
-                 AGENTE IA
+Es la primera capa que analiza una solicitud.
 
-                     |
+Debe decidir:
 
-        ----------------------------
+- si puede resolverse con Node.js;
+- si requiere razonamiento;
+- si requiere visión;
+- qué contexto necesita cada componente.
 
-        OJOS       MOTOR       MANOS
-
-        Visión     IA          Tools
-```
 
 ---
 
-# 8. Ojos — Sistema visual
+## Objetivo
 
-Responsabilidad:
+Evitar llamadas innecesarias a modelos IA.
 
-Comprender información visual.
+Reducir:
 
-Puede utilizar:
+- costos;
+- latencia;
+- dependencia externa.
 
-- Gemini Vision;
-- Qwen-VL;
-- otros modelos multimodales.
-
-Debe analizar:
-
-- colores;
-- composición;
-- equilibrio;
-- jerarquía visual;
-- punto focal;
-- profundidad;
-- distribución de elementos.
-
-La visión observa.
-
-No controla directamente el editor.
 
 ---
 
-# 9. Motor — Sistema de razonamiento
+# 9. Model Router
 
-Responsabilidad:
+## Responsabilidad
 
-Pensar y tomar decisiones.
+Seleccionar el modelo adecuado cuando el Agent Decision Layer determine que se necesita IA.
 
-Debe:
+No decide cuándo usar IA.
 
-- comprender pedidos del usuario;
-- crear estrategias;
-- elegir recursos;
-- decidir herramientas;
-- resolver ambigüedades.
+Solamente decide qué modelo utilizar.
 
-Actualmente:
-
-Ollama local.
-
-Modelos posibles:
-
-- Qwen;
-- Llama;
-- otros modelos compatibles.
-
----
-
-# 10. Manos — Sistema de herramientas
-
-Responsabilidad:
-
-Ejecutar acciones dentro del editor.
-
-Ejemplo:
-
-Usuario:
-
-"Crear diseño de princesa rosa"
-
-Proceso:
-
-```
-IA analiza
-
-↓
-
-Decide composición
-
-↓
-
-Selecciona recursos
-
-↓
-
-Utiliza tools
-
-↓
-
-Editor ejecuta
-```
-
----
-
-# 11. Recursos del sistema
-
-El agente debe trabajar con los recursos disponibles dentro de la plataforma.
-
-Ejemplos:
-
-- personajes;
-- princesas;
-- fondos;
-- flores;
-- efectos;
-- brillos;
-- decoraciones;
-- textos.
-
-El agente no debe inventar recursos inexistentes.
-
-Debe utilizar la biblioteca real del sistema.
-
----
-
-# 12. Model Router (futuro)
-
-Actualmente el modelo está definido directamente en el código.
-
-Esto debe cambiar.
-
-Objetivo:
-
-Cambiar modelos sin modificar archivos del agente.
 
 Arquitectura:
 
 ```
-AGENTE
+Agent Decision Layer
 
 ↓
 
-MODEL ROUTER
+Model Router
 
 ↓
 
 Ollama
+
 Gemini
+
 Otros proveedores
 ```
 
----
 
-Ejemplo de configuración:
+Ejemplo:
 
 ```
 REASONING_PROVIDER=ollama
@@ -381,7 +357,191 @@ VISION_MODEL=qwen3-vl:8b
 
 ---
 
-# 13. Agent State (futuro)
+# 10. Ojos — Sistema visual
+
+## Responsabilidad
+
+Analizar información visual.
+
+Puede utilizar:
+
+- Gemini Vision;
+- Qwen-VL;
+- otros modelos multimodales.
+
+
+Debe analizar:
+
+- colores;
+- composición;
+- equilibrio;
+- jerarquía;
+- punto focal;
+- profundidad;
+- distribución.
+
+
+La visión solamente se utiliza cuando existe necesidad visual.
+
+No controla directamente el editor.
+
+---
+
+# 11. Motor — Sistema de razonamiento
+
+## Responsabilidad
+
+Resolver problemas donde la lógica determinista no es suficiente.
+
+Debe:
+
+- interpretar solicitudes;
+- crear estrategias;
+- resolver ambigüedades;
+- planificar diseños.
+
+
+Modelos posibles:
+
+- Qwen;
+- Llama;
+- otros modelos compatibles.
+
+---
+
+# 12. Manos — Sistema de herramientas
+
+## Responsabilidad
+
+Ejecutar acciones reales dentro del editor.
+
+Ejemplo:
+
+```
+Usuario solicita diseño
+
+↓
+
+Agente crea estrategia
+
+↓
+
+Selecciona recursos
+
+↓
+
+Ejecuta tools
+
+↓
+
+Editor cambia
+```
+
+
+---
+
+# 13. Recursos del sistema
+
+El agente debe trabajar con recursos reales disponibles.
+
+Ejemplos:
+
+- personajes;
+- princesas;
+- fondos;
+- flores;
+- efectos;
+- brillos;
+- decoraciones;
+- textos.
+
+
+El agente no debe inventar recursos inexistentes.
+
+Debe consultar la biblioteca real del sistema.
+
+---
+
+# 14. Inteligencia del sistema
+
+La inteligencia estará separada en tres niveles.
+
+
+## Inteligencia fija
+
+Vive en código.
+
+Ejemplos:
+
+- validaciones;
+- seguridad;
+- ejecución de herramientas;
+- reglas técnicas.
+
+
+## Inteligencia acumulada
+
+Vive en Supabase.
+
+Ejemplos:
+
+- experiencias;
+- patrones;
+- estrategias;
+- relaciones;
+- evidencia.
+
+
+## Inteligencia de razonamiento
+
+Vive en los modelos IA.
+
+Ejemplos:
+
+- interpretación;
+- creatividad;
+- resolución de problemas nuevos.
+
+---
+
+# 15. Supabase — Memoria y conocimiento
+
+Supabase será responsable de almacenar:
+
+
+## Memoria episódica
+
+Experiencias reales de diseños.
+
+Guarda:
+
+- objetivo;
+- estrategia;
+- composición;
+- recursos;
+- resultado.
+
+
+## Memoria de conocimiento
+
+Patrones aprendidos.
+
+Ejemplos:
+
+- combinaciones exitosas;
+- reglas de composición;
+- relaciones entre estilos y recursos.
+
+
+## Evidencia
+
+Información que permite validar conocimientos.
+
+---
+
+# 16. Agent State
+
+## Objetivo
 
 Crear un estado central del agente.
 
@@ -390,29 +550,26 @@ Debe contener:
 ```
 AgentState
 
-- objetivo del usuario
+- objetivo usuario
 - canvas actual
 - elementos existentes
 - recursos disponibles
 - restricciones
-- plan actual
+- herramientas disponibles
+- observaciones
+- plan
 - acciones realizadas
 - resultado
 ```
 
-Esto permitirá que el agente tenga contexto real.
-
 ---
 
-# 14. Planner (futuro)
+# 17. Planner
 
-Separar:
+## Objetivo
 
-## Pensamiento
+Separar pensamiento y ejecución.
 
-de
-
-## Ejecución
 
 Flujo:
 
@@ -438,27 +595,24 @@ Ejecutar herramientas
 
 ---
 
-# 15. Verifier (futuro)
+# 18. Verifier
 
 El agente debe revisar sus propios resultados.
 
-Debe existir:
 
 ## Verificación técnica
 
-Realizada por Node.js.
+Node.js:
 
-Ejemplos:
+- posiciones;
+- tamaños;
+- límites;
+- reglas.
 
-- elementos fuera del lienzo;
-- errores de tamaño;
-- posiciones inválidas.
 
 ## Verificación visual
 
-Realizada por modelos visuales.
-
-Ejemplos:
+Modelos visuales:
 
 - composición;
 - equilibrio;
@@ -467,111 +621,91 @@ Ejemplos:
 
 ---
 
-# 16. Memoria futura
-
-El agente tendrá tres niveles:
-
-## Memoria de trabajo
-
-Información durante la ejecución actual.
-
-Ejemplo:
-
-AgentState.
-
-
-## Memoria episódica
-
-Experiencias reales de diseños creados.
-
-Debe guardar:
-
-- objetivo;
-- estrategia;
-- composición;
-- resultado.
-
-
-## Memoria de conocimiento
-
-Patrones aprendidos.
-
-Ejemplos:
-
-- combinaciones exitosas;
-- estrategias de composición;
-- reglas de diseño.
-
----
-
-# 17. Orden recomendado de desarrollo
+# 19. Orden recomendado de desarrollo
 
 ## Fase 1
 
-Crear Model Router.
-
-Objetivo:
-
-Cambiar modelos sin modificar código.
+Agent Decision Layer.
 
 
 ## Fase 2
 
-Crear Agent State.
-
-Objetivo:
-
-Dar contexto completo al agente.
+Model Router.
 
 
 ## Fase 3
 
-Crear Planner.
-
-Objetivo:
-
-Separar razonamiento y ejecución.
+Agent State.
 
 
 ## Fase 4
 
-Crear Verifier.
-
-Objetivo:
-
-Permitir autocorrección.
+Tool Registry.
 
 
 ## Fase 5
 
-Crear memoria.
+Planner, Executor y Verifier.
 
 
 ## Fase 6
 
-Crear aprendizaje.
+Diseñador profesional.
 
+
+## Fase 7
+
+Reconstrucción de referencias.
+
+
+## Fase 8
+
+Memoria de experiencias.
+
+
+## Fase 9
+
+Sistema de conocimiento.
+
+
+## Fase 10
+
+Aprendizaje.
+
+
+## Fase 11
+
+Automatización avanzada.
+
+
+## Fase 12
+
+Decorador profesional de escenarios.
 
 ---
 
-# 18. Principios que deben mantenerse
+# 20. Principios técnicos
 
 1. El agente no es un chatbot.
 
 2. El agente es un diseñador profesional dentro del editor.
 
-3. La IA propone decisiones.
+3. La IA no se utiliza para tareas que Node.js puede resolver.
 
-4. Node.js mantiene autoridad.
+4. La visión solo se llama cuando existe necesidad visual.
 
-5. Las tools representan capacidades reales.
+5. La IA propone.
 
-6. El agente utiliza recursos existentes.
+6. Node.js mantiene autoridad.
 
-7. Los modelos IA deben poder cambiarse sin modificar arquitectura.
+7. Las herramientas ejecutan.
 
-8. El conocimiento debe sobrevivir aunque cambie el modelo.
+8. Los modelos pueden cambiar sin afectar arquitectura.
 
-9. Primero construir un agente operativo.
+9. El conocimiento pertenece al sistema, no al modelo.
 
-10. Después construir aprendizaje.
+10. Supabase almacena memoria y aprendizaje.
+
+11. El aprendizaje modifica conocimiento, no código automáticamente.
+
+12. La arquitectura debe sobrevivir a cambios de computadora, modelos y proveedores.
